@@ -21,9 +21,16 @@ const mapCenter = [NEXT_PUBLIC_HOME_LAT, NEXT_PUBLIC_HOME_LONG] as [
   number
 ];
 
-const Strike = ({ strike }: { strike: StrikeEntity }) => {
+const Strike = ({
+  strike,
+  timeRange,
+}: {
+  strike: StrikeEntity;
+  timeRange: number;
+}) => {
   const now = dayjs();
-  const relevancy = 1 + dayjs(strike.last_changed).diff(now, "minute") / 10;
+  const relevancy =
+    (1 + dayjs(strike.last_changed).diff(now, "minute") / 10) * timeRange;
 
   return (
     <Marker
@@ -55,6 +62,7 @@ export const Map = ({
 }) => {
   const [connected, setConnected] = useState<boolean>(false);
   const [strikes, setStrikes] = useState<StrikeEntity[]>(baseStrikesData);
+  const [timeRange, setTimeRange] = useState<number>(1);
 
   useEffect(() => {
     const ws = new WebSocket(NEXT_PUBLIC_API_URL_WEBSOCKET as string);
@@ -102,6 +110,18 @@ export const Map = ({
         <p>Updated at: {updatedAt}</p>
         <p>Lightning count: {strikes.length}</p>
         <p>Backend: {connected ? "Connected" : "Not connected"}</p>
+        {/* slider */}
+        <label htmlFor="range">Time range:</label>
+        <input
+          type="range"
+          min="0"
+          max="10"
+          step="1"
+          value={timeRange * 10}
+          onChange={(e) => {
+            setTimeRange(parseInt(e.target.value) / 10);
+          }}
+        />
       </div>
       <MapContainer
         center={mapCenter}
@@ -119,7 +139,11 @@ export const Map = ({
         <MarkerLayer>
           <MarkerClusterGroup chunkedLoading>
             {strikes.map((strike) => (
-              <Strike key={strike.entity_id} strike={strike} />
+              <Strike
+                key={strike.entity_id}
+                strike={strike}
+                timeRange={timeRange}
+              />
             ))}
           </MarkerClusterGroup>
         </MarkerLayer>
