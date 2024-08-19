@@ -101,6 +101,9 @@ export const Map = ({
   const [timeRange, setTimeRange] = useState<number>(100);
 
   useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
     const ws = new WebSocket(NEXT_PUBLIC_API_URL_WEBSOCKET as string);
     ws.onopen = () => {};
     ws.onclose = () => {
@@ -138,6 +141,10 @@ export const Map = ({
       ws.close();
     };
   }, []);
+
+  if (typeof window === "undefined") {
+    return null;
+  }
 
   return (
     <>
