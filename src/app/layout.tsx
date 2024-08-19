@@ -2,8 +2,13 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "leaflet/dist/leaflet.css";
-import { Map } from "@/components/Map";
 import { getBaseStrikes } from "@/app/server/get-base-strikes";
+import dynamic from "next/dynamic";
+
+const Map = dynamic(
+  () => import("@/components/Map").then((module) => module.Map),
+  { ssr: false }
+);
 
 const inter = Inter({ subsets: ["latin"] });
 

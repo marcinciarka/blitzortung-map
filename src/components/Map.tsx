@@ -22,7 +22,7 @@ dayjs.extend(timeAgo, {
   thresholds: [
     { l: "s", r: 1 },
     { l: "m", r: 1 },
-    { l: "mm", r: 600, d: "minute" },
+    { l: "mm", r: 60, d: "minute" },
   ],
 });
 
